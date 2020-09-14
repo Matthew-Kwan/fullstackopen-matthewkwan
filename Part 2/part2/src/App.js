@@ -9,7 +9,7 @@ const App = (props) => {
 
   // add HTML form
   const addNote = (event) => {
-    console.log(event.target.value)
+    
     event.preventDefault() 
     const noteObject = {
       content:newNote,
