@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import axios from 'axios'
 
 const Info = ({names,filter}) => {
 
@@ -19,12 +20,23 @@ const Filter = ({filter, onChange}) => {
 }
 
 const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number: '4162341562'}
-  ]) 
+  const [ persons, setPersons ] = useState([]) 
   const [ newName, setNewName ] = useState('')
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setNewFilter ] = useState('')
+
+  const hook = () => {
+    axios
+      .get('http://localhost:3001/persons') 
+      .then(response => {
+        console.log(response.data)
+        setPersons(response.data)
+      })
+  }
+
+  useEffect(hook, [])
+
+
 
   // event handler for form 
   const addInfo = (e) => {
