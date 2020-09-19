@@ -1,6 +1,5 @@
 import React, { useEffect, useState} from 'react';
 import axios from 'axios';
-import logo from './logo.svg';
 import './App.css';
 import Search from './components/Search'
 import Country from './components/Country'
@@ -32,7 +31,7 @@ function App() {
   return (
     <div>
       <Search search={search} handler={handleSearchChange}/>
-      <Country countries={countries} search={search}/>
+      <Country countries={countries} search={search} setSearch={setSearch}/>
     </div>
   );
 }

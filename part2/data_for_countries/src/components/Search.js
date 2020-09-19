@@ -12,7 +12,4 @@ const Search = ({search, handler}) => {
 
 }
 
-
-
-
 export default Search
