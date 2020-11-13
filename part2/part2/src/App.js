@@ -20,7 +20,7 @@ const App = () => {
       })
       .catch(error => {
         alert (
-          `The note '${notecontent}' was already deleted from the server.`
+          `The note '${note.content}' was already deleted from the server.`
         )
         setNotes(notes.filter(n => n.id !== id))
       })
