@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import personService from './services/persons'
 
-const Info = ({names,filter}) => {
+const Info = ({person,filter,deleteInfoOf}) => {
 
   const filterLength = filter.length
-  const filteredArray = names.filter((x) => {
-    return filter.toLowerCase() === x.name.slice(0,filterLength).toLowerCase()
-  })
-
-  return filteredArray.map(name => <div key={name.name}><p>{name.name} {name.number}</p></div>)
+  const matchBool = person.name.slice(0,filterLength) === filter
+  
+  if(matchBool) {
+    return <div key={person.name}><p>{person.name} {person.number} <button onClick={deleteInfoOf}>Delete</button></p></div>
+  } else {
+    return
+  }
 }
 
 const Filter = ({filter, onChange}) => {
@@ -25,34 +27,70 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   const [ filter, setNewFilter ] = useState('')
 
-  const hook = () => {
-    axios
-      .get('http://localhost:3001/persons') 
+  // Get the current entries
+  const getPeople = () => {
+
+    personService
+      .getAll()
       .then(response => {
-        console.log(response.data)
-        setPersons(response.data)
+        //console.log(` This is the GET response: ${response}`)
+        setPersons(response)
       })
   }
 
-  useEffect(hook, [])
-
-
+  useEffect(getPeople, [])
+  
 
   // event handler for form 
   const addInfo = (e) => {
     e.preventDefault()
     const nameObject = {
       name: newName,
-      number: newNumber
+      number: newNumber,
     }
 
     if(persons.map(person => person.name).includes(nameObject.name)) {
-      window.alert(`${nameObject.name} already exists in the phonebook.`)
+      if(window.confirm(`${nameObject.name} already exists in the phonebook. Updating their number to ${nameObject.number} if OK.`)) {
+        let existingPerson = persons.find(p => p.name === nameObject.name)
+        personService
+          .update(existingPerson.id, nameObject)
+          .then(response => {
+            setPersons(persons.map(person => person.name !== existingPerson.name ? person : response))
+          })
+
+      }
+
+
     } else {
         // set name
-        setPersons(persons.concat(nameObject))
-        setNewName('')
-        setNewNumber('')
+        personService
+          .create(nameObject)
+          .then(response => {
+            setPersons(persons.concat(response))
+            setNewName('')
+            setNewNumber('')
+          })
+    }
+   } 
+
+  // Deletion event
+  const deleteInfo = (id) => {
+
+    console.log(id)
+
+    if (window.confirm("Do you want to delete this person from your phonebook?")) {
+      personService
+        .deletePerson(id)
+        .then(response => {
+          // retrieve new list of people after deletion and reset state to re-render info component
+          getPeople()
+          console.log('Person deleted') 
+        })
+        .catch(err => {
+          console.log(`Deletion failed: ${err}`)
+        })
+    } else {
+      return
     }
 
   }
@@ -75,6 +113,7 @@ const App = () => {
     setNewFilter(e.target.value)
   }
 
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -90,7 +129,10 @@ const App = () => {
         </div>
       </form>
       <h2>Numbers</h2>
-      <Info names={persons} filter={filter} key={persons.name}/>
+        {persons.map((person, i) =>
+          <Info person={person} filter={filter} key={i} deleteInfoOf = {() => deleteInfo(person.id)}/>
+        )}
+      
       
     </div>
   )
