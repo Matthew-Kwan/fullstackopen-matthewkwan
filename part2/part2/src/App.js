@@ -1,73 +1,85 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Note from './components/Note'
+import noteService from './services/notes'  
 
 const App = () => {
-  const [notes, setNotes] = useState([])
-  // new state for storing user submitted input 
+  const [notes, setNotes] = useState([]) 
   const [newNote, setNewNote] = useState('')
   const [showAll, setShowAll] = useState(true)
 
-  const hook = () => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/notes')
-      .then(response => {
-        console.log('promise fulfilled')
-        setNotes(response.data)
+  const toggleImportanceOf = id => {
+    const url = `http://localhost:3001/notes/${id}`
+    const note = notes.find(n => n.id === id)
+    const changedNote = { ...note, important: !note.important }
+  
+    noteService
+      .update(id,changedNote)
+      .then(returnedNote => {
+        setNotes(notes.map(note => note.id !== id ? note : returnedNote))
+      })
+      .catch(error => {
+        alert (
+          `The note '${notecontent}' was already deleted from the server.`
+        )
+        setNotes(notes.filter(n => n.id !== id))
       })
   }
-  
-  useEffect(hook, [])
-  
-  console.log('render', notes.length, 'notes')
 
-  // add HTML form
+  useEffect(() => {
+    noteService
+      .getAll()
+      .then(initialNote => {
+        setNotes(initialNote)
+      })
+  }, [])
+
   const addNote = (event) => {
-    
-    event.preventDefault() 
+    event.preventDefault()
     const noteObject = {
-      content:newNote,
+      content: newNote,
       date: new Date().toISOString(),
-      important: Math.random() < 0.5,
-      id: notes.length + 1 
+      important: Math.random() > 0.5
     }
-
-    setNotes(notes.concat(noteObject))
-    setNewNote('') // reset the state to blank
+  
+    noteService
+      .create(noteObject)
+      .then(returnedNote => {
+        setNotes(notes.concat(returnedNote))
+        setNewNote('')
+      })
   }
 
-  // event handler for syncing change to input with component state 
   const handleNoteChange = (event) => {
-    console.log(event.target.value)
     setNewNote(event.target.value)
   }
 
   const notesToShow = showAll
     ? notes
-    : notes.filter(note => note.important ===true) 
+    : notes.filter(note => note.important)
 
   return (
     <div>
       <h1>Notes</h1>
       <div>
         <button onClick={() => setShowAll(!showAll)}>
-          show {showAll ? 'important' : 'all'}
+          show {showAll ? 'important' : 'all' }
         </button>
-      </div>
+      </div>      
       <ul>
-        {notesToShow.map(note => 
-          <Note key={note.id} note={note} />
+        {notesToShow.map((note, i) => 
+          <Note key={i} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
         )}
       </ul>
       <form onSubmit={addNote}>
-        <input 
+        <input
           value={newNote}
-          onChange={handleNoteChange} />
+          onChange={handleNoteChange}
+        />
         <button type="submit">save</button>
-      </form>
+      </form>   
     </div>
   )
 }
 
-export default App
+export default App 
