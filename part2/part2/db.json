@@ -21,7 +21,7 @@
     {
       "content": "Test",
       "date": "2020-11-12T04:21:40.911Z",
-      "important": true,
+      "important": false,
       "id": 4
     },
     {
@@ -35,6 +35,12 @@
       "date": "2020-11-13T23:23:21.792Z",
       "important": false,
       "id": 6
+    },
+    {
+      "content": "Test",
+      "date": "2020-11-18T02:20:39.408Z",
+      "important": false,
+      "id": 7
     }
   ]
 }
