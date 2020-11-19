@@ -41,11 +41,10 @@ const App = () => {
   }
 
   useEffect(getPeople, [])
-  console.log(`These are the list of persons: ${persons}`)
-  
 
   // event handler for form 
   const addInfo = (e) => {
+    console.log("addInfo called!")
     e.preventDefault()
     const nameObject = {
       name: newName,
@@ -80,8 +79,9 @@ const App = () => {
             }, 5000)
             console.log(error)
           })
+        }
 
-      } else {
+    } else {
         // set name
         personService
           .create(nameObject)
@@ -98,8 +98,7 @@ const App = () => {
             }, 5000)
           })
         }
-      }
-    } 
+    }
 
   // Deletion event
   const deleteInfo = (id) => {
