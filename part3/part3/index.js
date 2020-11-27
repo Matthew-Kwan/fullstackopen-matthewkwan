@@ -1,32 +1,46 @@
 // This is how Node.js imports modules
 const express = require('express')
 const cors = require('cors')
+const mongoose = require('mongoose')
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
 
-let notes = [
-    {
-      id: 1,
-      content: "HTML is easy",
-      date: "2019-05-30T17:30:31.098Z",
-      important: true
-    },
-    {
-      id: 2,
-      content: "Browser can execute only Javascript",
-      date: "2019-05-30T18:39:34.091Z",
-      important: false
-    },
-    {
-      id: 3,
-      content: "GET and POST are the most important methods of HTTP protocol",
-      date: "2019-05-30T19:20:14.298Z",
-      important: true       
-    }
-  ] 
+// MongoDB
+const url = 'mongodb+srv://fullstack:132132@cluster0.walhv.mongodb.net/note-app?retryWrites=true&w=majority'
+
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
+
+const noteSchema = new mongoose.Schema({
+  content: String,
+  date: Date,
+  important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
+
+// let notes = [
+//     {
+//       id: 1,
+//       content: "HTML is easy",
+//       date: "2019-05-30T17:30:31.098Z",
+//       important: true
+//     },
+//     {
+//       id: 2,
+//       content: "Browser can execute only Javascript",
+//       date: "2019-05-30T18:39:34.091Z",
+//       important: false
+//     },
+//     {
+//       id: 3,
+//       content: "GET and POST are the most important methods of HTTP protocol",
+//       date: "2019-05-30T19:20:14.298Z",
+//       important: true       
+//     }
+//   ] 
 
 // request contains all information of the http request
 // response is used to define how the request is responded to
@@ -34,10 +48,12 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
+// HTTP GET request for getting all notes 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
-
 // HTTP GET request for getting a single note 
 app.get('/api/notes/:id', (request, response) => {
   const id = Number(request.params.id) 
