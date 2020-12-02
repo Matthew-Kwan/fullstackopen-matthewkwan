@@ -9,6 +9,21 @@ app.use(cors())
 app.use(express.json())
 app.use(express.static('build'))
 
+// add in middleware error handler 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler)
+
 // request contains all information of the http request
 // response is used to define how the request is responded to
 app.get('/', (request, response) => {
@@ -23,18 +38,16 @@ app.get('/api/notes', (request, response) => {
 })
 
 // HTTP GET request for getting a single note 
-app.get('/api/notes/:id', (request, response) => {
-  Note.findById(request.params.id).then(note => {
-    if (note) {
-      response.json(note) 
-    } else {
-      response.status(404).end() 
-    }
-  })
-  .catch(err => {
-    console.log(error)
-    response.status(400).send({ error: 'malformatted id' })
-  })   
+app.get('/api/notes/:id', (request, response, next) => {
+  Note.findById(request.params.id)
+    .then(note => {
+      if (note) {
+        response.json(note)
+      } else {
+        response.status(404).end()
+      }
+    })
+    .catch(error => next(error))
 })
 
 
@@ -64,7 +77,7 @@ app.put('/api/notes/:id', (request, response, next) => {
 })
 
 // HTTP POST request for adding a new note 
-app.post('/api/notes', (request, response) => {
+app.post('/api/notes', (request, response, next) => {
   const body = request.body
 
   if (body.content === undefined) {
@@ -77,9 +90,13 @@ app.post('/api/notes', (request, response) => {
     date: new Date(),
   })
 
-  note.save().then(savedNote => {
-    response.json(savedNote)
-  })
+  note
+  .save()
+  .then(savedNote => savedNote.toJSON())
+  .then(savedAndFormattedNote => {
+    response.json(savedAndFormattedNote)
+  }) 
+  .catch(error => next(error)) 
 })
 
 // PORT definition

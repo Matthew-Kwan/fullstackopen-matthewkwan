@@ -97,6 +97,14 @@ const App = () => {
               setMessage(null)
             }, 5000)
           })
+          .catch(error => {
+            setMsgType('error')
+            setMessage(error.response.data)
+            setTimeout(() => {
+              setMessage(null)
+            }, 5000)
+            console.log(error.response.data)
+          })
         }
     }
 
