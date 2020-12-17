@@ -10,7 +10,7 @@ const Info = ({person,filter,deleteInfoOf}) => {
   if(matchBool) {
     return <div key={person.name}><p>{person.name} {person.number} <button onClick={deleteInfoOf}>Delete</button></p></div>
   } else {
-    return
+    return <div> </div>
   }
 }
 
