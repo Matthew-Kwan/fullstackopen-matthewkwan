@@ -30,14 +30,14 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
 })
 
-// HTTP GET request for getting all notes 
+// HTTP GET request for getting all notes
 app.get('/api/notes', (request, response) => {
   Note.find({}).then(notes => {
     response.json(notes)
   })
 })
 
-// HTTP GET request for getting a single note 
+// HTTP GET request for getting a single note
 app.get('/api/notes/:id', (request, response, next) => {
   Note.findById(request.params.id)
     .then(note => {
@@ -51,7 +51,7 @@ app.get('/api/notes/:id', (request, response, next) => {
 })
 
 
-// HTTP DELETE request for deleting a single note 
+// HTTP DELETE request for deleting a single note
 app.delete('/api/notes/:id', (request, response, next) => {
   Note.findByIdAndRemove(request.params.id)
     .then(result => {
@@ -60,7 +60,7 @@ app.delete('/api/notes/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// HTTP PUT request for updating importance of notes 
+// HTTP PUT request for updating importance of notes
 app.put('/api/notes/:id', (request, response, next) => {
   const body = request.body
 
@@ -76,7 +76,7 @@ app.put('/api/notes/:id', (request, response, next) => {
     .catch(error => next(error))
 })
 
-// HTTP POST request for adding a new note 
+// HTTP POST request for adding a new note
 app.post('/api/notes', (request, response, next) => {
   const body = request.body
 
@@ -95,8 +95,8 @@ app.post('/api/notes', (request, response, next) => {
   .then(savedNote => savedNote.toJSON())
   .then(savedAndFormattedNote => {
     response.json(savedAndFormattedNote)
-  }) 
-  .catch(error => next(error)) 
+  })
+  .catch(error => next(error))
 })
 
 // PORT definition
