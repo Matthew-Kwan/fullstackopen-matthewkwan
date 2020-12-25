@@ -1,0 +1,9 @@
+POST http://localhost:3003/api/blogs
+Content-Type: application/json
+
+{
+  "title": "How to bait and outsmart your opponents!",
+  "author": "Matthew Kwan",
+  "url": "www.github.com/matthew-kwan",
+  "likes": 100
+}
