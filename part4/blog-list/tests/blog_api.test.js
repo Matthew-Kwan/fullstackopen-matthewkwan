@@ -44,9 +44,39 @@ test('api - check that post increments length correctly', async () => {
   expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1) 
 
   // check for content 
-
   const blogTitles = blogsAtEnd.map(blog => blog.title)
   expect(blogTitles).toContain('New Blog')
+})
+
+test('api - check that like defaults to zero', async () => {
+  const newBlog = {
+    title: 'New No Like Blog',
+    author: 'Matthew Kwan',
+    url: 'test.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+  
+  const blogsAtEnd = await helper.blogsInDB()
+  const lastBlog = blogsAtEnd[blogsAtEnd.length - 1]
+  expect(lastBlog.likes).toBe(0)
+
+})
+
+test('api - check that formatting err returned for missing title and url', async () => {
+  const newBlog = {
+    author: 'Matthew Kwan'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+
 })
 
 afterAll(() => {
