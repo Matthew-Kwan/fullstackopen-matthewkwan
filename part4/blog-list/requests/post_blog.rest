@@ -3,7 +3,7 @@ Content-Type: application/json
 Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1rd2FuMiIsImlkIjoiNWZlYjk0N2NkYTVkODIxZWQ4ZTM5MjM0IiwiaWF0IjoxNjA5Mjc0Nzg1fQ.6S10BwFUezRmhoIYC6LrgxN8yHgY2pwPdHTStxxb0yU
 
 {
-  "title": "How to not bait and outsmart your opponents!",
+  "title": "How to not not bait and outsmart your opponents!",
   "author": "Matthew Kwan",
   "url": "www.github.com/matthew-kwan",
   "likes": 100
