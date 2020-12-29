@@ -23,6 +23,22 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog)
 })
 
+// HTTP PUT REQUEST 
+blogsRouter.put(':id', async (request, response) => {
+  const body = request.body 
+
+  const blog = new Blog({
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes
+  })
+
+  await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
+  response.status(202).end()
+
+})
+
 // HTTP DELETE REQUEST 
 blogsRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndRemove(request.params.id)
