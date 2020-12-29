@@ -16,6 +16,32 @@ beforeEach(async () => {
   await user.save()
 })
 
+describe('user post tests', () => {
+
+  test('user - posting duplicate user name', async () => {
+    const usersAtStart = await helper.usersInDB() 
+
+    const newUser = { 
+      username: 'root',
+      name: 'Matt',
+      password: '132132',
+    }
+
+    const result = await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    expect(result.body.error).toContain('`username` to be unique')
+
+    const usersAtEnd = await helper.usersInDB()
+    expect(usersAtEnd).toHaveLength(usersAtStart.length)
+
+  })
+
+})
+
 test('user - creation succeeds with a fresh username', async () => {
   const usersAtStart = await helper.usersInDB()
 
