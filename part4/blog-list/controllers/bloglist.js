@@ -37,7 +37,7 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 // HTTP PUT REQUEST 
-blogsRouter.put(':id', async (request, response) => {
+blogsRouter.put('/:id', async (request, response) => {
   const body = request.body 
 
   const blog = new Blog({
@@ -54,8 +54,25 @@ blogsRouter.put(':id', async (request, response) => {
 
 // HTTP DELETE REQUEST 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndRemove(request.params.id)
-  response.status(204).end()
+  const token = request.token
+  console.log('Token: ', token)
+  const decodedToken = jwt.verify(token, process.env.SECRET) 
+  if(!token || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid'})
+  }
+
+  const blog = await Blog.findById(request.params.id)   
+
+  console.log('Blog: ', blog.title)
+
+  if (blog.user.toString() !== decodedToken.id.toString()) {
+    return response.status(401).json({ error: 'accessing another user\'s blog' })
+  } else {
+    await Blog.findByIdAndRemove(request.params.id)
+    return response.status(200).end()
+  }
+
+
 })
 
-module.exports = blogsRouter
+module.exports = blogsRouter 

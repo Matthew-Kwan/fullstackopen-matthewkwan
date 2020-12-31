@@ -1,6 +1,6 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1rd2FuMiIsImlkIjoiNWZlYjk0N2NkYTVkODIxZWQ4ZTM5MjM0IiwiaWF0IjoxNjA5Mjc0Nzg1fQ.6S10BwFUezRmhoIYC6LrgxN8yHgY2pwPdHTStxxb0yU
+Authorization: bearer 4235235yy5jrhtn32t
 
 {
   "title": "How to not not bait and outsmart your opponents!",
