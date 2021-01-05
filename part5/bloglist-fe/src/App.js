@@ -13,7 +13,8 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [msgState, setMsgState] = useState('')
 
   // GET Request for existing blogs
   useEffect(() => {
@@ -32,7 +33,29 @@ const App = () => {
   }, [])
 
 
-  // Helper Functions for HTML Injections
+  // Components
+
+  const Notification = ({ message, msgState }) => {
+    if (errorMessage === null) {
+      return null
+    }
+
+    const notificationStyle = {
+      color: (msgState === 'success' ? 'green' : 'red'),
+      background: 'lightgrey',
+      fontSize: '20px',
+      borderStyle: 'solid',
+      borderRadius: '5px',
+      padding: '10px',
+      marginBottom: '10px'
+    }
+
+    return (
+      <div style={notificationStyle}>
+        {message}
+      </div>
+    )
+  }
 
   const logoutButton = () => (
     <button onClick={handleLogout}>logout</button>
@@ -111,6 +134,14 @@ const App = () => {
           author: "",
           url: ""
         })
+        // success message
+        setMsgState('success')
+        setErrorMessage(
+          `Blog with title '${blogObject.title}' by '${blogObject.author}' created`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
   }
 
@@ -138,7 +169,16 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
+      //define notification msg
+      setMsgState('success')
+      setErrorMessage(
+        `Welcome ${user.name}, you have successfully logged in!`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     } catch (exception) {
+      setMsgState('error')
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
         setErrorMessage(null)
@@ -157,7 +197,7 @@ const App = () => {
   return (
     <div>
       <h1>Bloglist</h1>
-
+      <Notification message={errorMessage} msgState={msgState}/>
       { user === null ?
         <div>
         {loginForm()}
