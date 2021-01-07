@@ -5,12 +5,14 @@ import BlogForm from './components/BlogForm'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import userService from './services/user'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [msgState, setMsgState] = useState('')
 
@@ -20,7 +22,9 @@ const App = () => {
   // GET Request for existing blogs
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs( blogs )
+      setBlogs( blogs.sort((a,b) => {
+        return b.likes - a.likes
+      } ))
     )
   }, [])
 
@@ -66,6 +70,7 @@ const App = () => {
 
   const addBlog = (newBlog) => {
     const blogObject = newBlog
+    blogObject.user = userId
 
     blogService
       .create(blogObject)
@@ -91,6 +96,23 @@ const App = () => {
     })
   }
 
+  const deleteBlog = (blog) => {
+
+    if (window.confirm("Do you really want to delete this blog from the list?")) {
+      blogService.deleteBlog(blog.id)
+      .then(response => {
+        blogService.getAll().then(blogs =>
+          setBlogs( blogs.sort((a,b) => {
+            return b.likes - a.likes
+          } ))
+        )
+        .catch(err => {
+          console.log(`Delete failed: ${err}`)
+        })
+      })
+    }
+  }
+
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -99,8 +121,16 @@ const App = () => {
         username, password,
       })
 
+      let userData = await userService.getAll()
+      userData = userData.filter(usr => usr.username === username)
+      setUserId(userData.id)
+
       window.localStorage.setItem(
         'loggedBlogappUser', JSON.stringify(user)
+      )
+
+      window.localStorage.setItem(
+        'loggedBlogappUserId', JSON.stringify(userId)
       )
 
       blogService.setToken(user.token)
@@ -116,6 +146,7 @@ const App = () => {
         setErrorMessage(null)
       }, 5000)
     } catch (exception) {
+      console.log(exception)
       setMsgState('error')
       setErrorMessage('Wrong credentials')
       setTimeout(() => {
@@ -158,7 +189,7 @@ const App = () => {
 
       <h2>Blogs</h2>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} updateLikes={updateLikes} />
+        <Blog key={blog.id} blog={blog} updateLikes={updateLikes} deleteBlog={deleteBlog} />
       )}
     </div>
   )
