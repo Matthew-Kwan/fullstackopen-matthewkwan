@@ -32,7 +32,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
+      const loggedUserIdJSON = window.localStorage.getItem('loggedBlogappUserId')
+      const userId = JSON.parse(loggedUserIdJSON)
       setUser(user)
+      setUserId(userId)
       blogService.setToken(user.token)
     }
   }, [])
@@ -158,7 +161,9 @@ const App = () => {
   const handleLogout = async (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBlogappUser')
+    window.localStorage.removeItem('loggedBlogappUserId')
     setUser(null)
+    setUserId('')
   }
 
   // Returned HTML

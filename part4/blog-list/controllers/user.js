@@ -9,7 +9,7 @@ usersRouter.get('/', async (request, response) => {
   response.json(users)
 })
 
-// User POST Request 
+// User POST Request
 usersRouter.post('/', async (request, response) => {
   const body = request.body
 
