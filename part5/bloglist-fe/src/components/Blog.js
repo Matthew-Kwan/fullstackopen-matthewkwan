@@ -1,5 +1,5 @@
-import React, {useState} from 'react'
-const Blog = ({ blog, updateLikes, deleteBlog}) => {
+import React, { useState } from 'react'
+const Blog = ({ blog, updateLikes, deleteBlog }) => {
 
   // Component states
   const [visible, setVisible] = useState(false)
@@ -15,7 +15,7 @@ const Blog = ({ blog, updateLikes, deleteBlog}) => {
 
   // Helper Functions
 
-  const showWhenVisible = { display: visible ? '' : 'none'}
+  const showWhenVisible = { display: visible ? '' : 'none' }
 
   const toggleVisibility = () => {
     setVisible(!visible)
